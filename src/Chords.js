@@ -14,6 +14,7 @@ export class ChordFinder {
             this.strings = [];
             stringNotes.forEach(val => this.strings.push(this.getStringNotes(val)));
             this.strings = this.strings.map(val => val.filter(x => chord.includes(x.note) || x.note === "M"));
+            this.chord = chord;
         }
     }
 
@@ -57,21 +58,21 @@ export class ChordFinder {
         return ret;
     }
 
-    buildChords(chord, chordNotes, range, strings) {
+    buildChords(chord, range, strings) {
         let ret = [];
         strings = strings || this.strings;
 
         if(strings.length < 1) {
-            let chordF = chord.map(x => x.fret)
+            let chordF = chord.map(x => x.fret);
             if((Math.abs(this.getRange(chordF.filter(x => x !== 0))) < range) && // within fingering range ( ͡° ͜ʖ ͡°)
-               (this.findAll(chord.map(x => x.note), chordNotes))             && // can find all notes within chord
-               (chordF.find(x => x !== -1)))                                     // not made up only of mutes
+               (this.findAll(chord.map(x => x.note), this.chord))             && // can find all notes within chord
+               (chordF.find(x => x !== -1) !== undefined))                                     // not made up only of mutes
                 return chordF;
             else return undefined;
         }
 
         strings[0].forEach(val => ret.push(chord.concat(val)));
-        return ret.map(val => this.buildChords(val, chordNotes, range, strings.slice(1))).filter(val => val !== undefined && val.length > 0);
+        return ret.map(val => this.buildChords(val, range, strings.slice(1))).filter(val => val !== undefined && val.length > 0);
     }
 
     find(note) {
@@ -142,9 +143,9 @@ export class ChordBuilder extends React.Component {
     constructor(props) {
         super(props);
 
-        this.finder = new ChordFinder(['e', 'B', 'G', 'D', 'A', 'E'], ["G", "B", "D"]);
+        this.finder = new ChordFinder(props.strings, props.chord);
         let chords = [];
-        let chordsTemp = this.finder.buildChords([], this.props.chord, this.props.range);
+        let chordsTemp = this.finder.buildChords([], this.props.range);
 
         let stack = [chordsTemp];
         while(stack.length > 0) {

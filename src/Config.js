@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ChordFinderStatic } from './Chords.js';
+import { ChordFinderStatic, ChordBuilder } from './Chords.js';
 
 class ConfigBase extends React.Component {
     update(state) {
@@ -29,6 +29,7 @@ export class NoteSelector extends ConfigBase {
 
 
         let newNotes = this.state.notes.concat([note]);
+        debugger;
         this.update({notes: newNotes});
     }
 
@@ -71,7 +72,8 @@ export class ChordConfig extends ConfigBase {
         this.state = {
             strings: ChordFinderStatic.defaultTuning,
             chord: ["G", "B", "D"],
-            chordMode: "chord"
+            chordMode: "chord",
+            displayMode: "input"
         };
     }
 
@@ -79,26 +81,39 @@ export class ChordConfig extends ConfigBase {
         this.update({strings: notes});
     }
 
+    updateChord(notes) {
+        this.update({chord: notes});
+    }
+
     render() {
         return (
-            <div className="flex-column">
-                <div className="flex-column" id="tuning-selector">
-                    <p>Tuning</p>
-                    <NoteSelector notes={this.state.strings} maxStrings={12} onChange={(state) => this.updateStrings(state.notes)}/>
-                </div>
+            <React.Fragment>
+            {this.state.displayMode === "input" &&
+                <div className="flex-column">
+                    <div className="flex-column" id="tuning-selector">
+                        <p>Tuning</p>
+                        <NoteSelector notes={this.state.strings} maxStrings={12} onChange={(state) => this.updateStrings(state.notes)}/>
+                    </div>
 
-                <div className="flex-column" id="chord selector">
-                    <p>Chord</p>
-                    <select id="mode-selector" onChange={(event) => this.update({chordMode: event.target.value})}>
-                        <option value="chord">Chord Mode</option>
-                        <option value="note">Note Mode</option>
-                    </select>
-                    {this.state.chordMode === "note"              ?
-                        <NoteSelector notes={this.state.chord}/>  :
-                        <p>Placeholder</p>
-                        }
+                    <div className="flex-column" id="chord selector">
+                        <p>Chord</p>
+                        <select id="mode-selector" onChange={(event) => this.update({chordMode: event.target.value})}>
+                            <option value="chord">Chord Mode</option>
+                            <option value="note">Note Mode</option>
+                        </select>
+                        {this.state.chordMode === "note"              ?
+                            <NoteSelector notes={this.state.chord} onChange={(state) => this.updateChord(state.notes)}/>  :
+                            <p>Placeholder</p>
+                            }
+                    </div>
+
+                    <button onClick={() => this.update({displayMode: "chords"})}>Submit</button>
                 </div>
-            </div>
+            }
+            {this.state.displayMode === "chords" &&
+                <ChordBuilder strings={this.state.strings} chord={this.state.chord} range={5} size={20} />
+            }
+            </React.Fragment>
         )       
     }
 }

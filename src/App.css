@@ -20,6 +20,7 @@ body {
 
 .string-tab {
   list-style-type: none;
+  flex-basis: 15%;
 }
 
 .flex-row {
