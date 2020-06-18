@@ -4,16 +4,17 @@ import BaseComponent from './BaseComponent.js';
 
 function fillTab(length, map) {
     let ret = "";
-    let symbols = map.map(val => val.symbol);   // NOTE: if the blinker is on a value (like 4), it adds two elements to indices
-    let indices = map.map(val => val.position); //       so the array is [1, 1, 4], and since the second 1 is never hit, position doesn't advance
-    let position = 0;                           //       like it should and doesn't draw the following values
-                                                //       possible ways to fix: save value under blinker before blinking, or priority for blinker and disallow duplicates
+    let symbols = map.map(val => val.symbol);   
+    let indices = map.map(val => val.position);
+    let position = 0;                           
 
     for(var i = 0; i < length; ++i) {
         if(i === indices[position]) {
             debugger;
             ret += symbols[position];
-            position += 1;
+            while(indices[position] === i) {
+                position += 1;
+            }
         } else ret += '-';
     }
 
@@ -25,7 +26,18 @@ function clearTabBlinker(map, cursor) {
 }
 
 function mapEntrySort(f, o) {
-    return f.position < o.position ? -1 : 1;
+    if(f.position < o.position) { // if f comes before o
+        return -1;
+    } 
+    
+    if(f.position > o.position) { // if f comes after o
+        return 1;
+    }
+
+    if(f.symbol === "|") return -1; // is f a pipe
+    if(o.symbol === "|") return  1; // is o a pipe
+
+    return -1; // whatever, f comes first, should never be reached
 }
 
 export default class TabEditor extends BaseComponent {
@@ -67,10 +79,8 @@ export default class TabEditor extends BaseComponent {
     changeMap(func, offset) {
         let map = this.state.map;
 
-        map = func(map);
-
         this.update({
-            map: map
+            map: func(map)
         });
 
         this.changePosition(offset || [0, 1]);
@@ -79,6 +89,7 @@ export default class TabEditor extends BaseComponent {
     insert(val) {
         let position = this.state.position;
         let mod = (map) => {
+            map[position[0]] = map[position[0]].filter(val => val.position !== position[1]);
             map[position[0]].push({position: position[1], symbol: val});
             map[position[0]].sort(mapEntrySort);
 
@@ -112,6 +123,7 @@ export default class TabEditor extends BaseComponent {
             position: [0, 0],
             length: props.length || 10,
             cursor: props.cursor || '|',
+            interval: props.interval || 400,
             map: map
         };
     }
@@ -120,7 +132,7 @@ export default class TabEditor extends BaseComponent {
         document.addEventListener("keydown", this.tabControls, false);
 
         this.update({
-            blinker: setInterval(this.blinkerFunction, this.props.interval || 500)
+            blinker: setInterval(this.blinkerFunction, this.state.interval)
         })
     }
 
@@ -144,7 +156,7 @@ export default class TabEditor extends BaseComponent {
         this.update({
             position: position,
             length: length,
-            blinker: setInterval(this.blinkerFunction, this.props.interval || 500),
+            blinker: setInterval(this.blinkerFunction, this.state.interval),
             map: map
         });
     }
