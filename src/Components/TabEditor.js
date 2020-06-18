@@ -135,40 +135,50 @@ export default class TabEditor extends BaseComponent {
                 }
             });
 
+            let newLength = this.state.length + 1;
             if(max > this.state.length) {
-                this.update({
-                    length: max
-                });
+                newLength = max;
             } else if(max === this.state.length) {
-                this.update({
-                    length: max + 1
-                });
+                newLength = max + 1;
             }
 
+            this.update({
+                length: newLength
+            });
             return map;
         }
 
 
-        this.changeMap(mod, [0, 0]);
+        this.changeMap(mod, [0, 1]);
     }
 
-    constructor(props) {
-        super(props);
-        this.blinkerFunction = this.blinkerFunction.bind(this);
-        this.tabControls = this.tabControls.bind(this);
+    reset() {
+        this.update(this.initialState(this.props));
+    }
 
+    initialState(props) {
         let map = [];
         for(var i = 0; i < this.props.strings.length; ++i) {
             map.push([]);
         }
 
-        this.state = {
+        return {
             position: [0, 0],
             length: props.length || 10,
             cursor: props.cursor || '|',
             interval: props.interval || 400,
             map: map
         };
+    }
+
+    constructor(props) {
+        super(props);
+
+        this.blinkerFunction = this.blinkerFunction.bind(this);
+        this.tabControls = this.tabControls.bind(this);
+        this.reset = this.reset.bind(this);
+
+        this.state = this.initialState(props);
     }
 
     componentDidMount() {
@@ -210,6 +220,7 @@ export default class TabEditor extends BaseComponent {
                 <ul className="string-tab">
                     {this.props.strings.map((val, index) => <li key={val}>{val} |{fillTab(this.state.length, this.state.map[index])}</li>)}
                 </ul>
+                <button onClick={this.reset}>Reset</button>
             </React.Fragment>
         )
     }
