@@ -2,6 +2,7 @@
 import React from 'react';
 import ChordSelector from './Components/ChordSelector.js';
 import TabView from './Components/Navigation/TabView.js';
+import TabEditor from './Components/TabEditor.js';
 
 import './App.css';
 
@@ -12,9 +13,9 @@ let tabs = [
         component:  React.createElement(ChordSelector, {maxStrings: 12})
     },
     {
-        name:       "Tab Creator",
+        name:       "Tab Editor",
         id:         "tabs",
-        component:  React.createElement(React.Fragment)
+        component:  React.createElement(TabEditor, {strings: ["e", "B", "G", "D", "A", "E"]})
     }
 ]
 
