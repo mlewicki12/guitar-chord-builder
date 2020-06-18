@@ -74,7 +74,7 @@ export default class TabEditor extends BaseComponent {
 
         clearInterval(this.state.blinker);
         let map = this.state.map;
-        map[position[0]] = clearTabBlinker(map[position[0]], this.state.cursor);
+        map = map.map(val => clearTabBlinker(val, this.state.cursor));
 
         this.update({
             position: position,
