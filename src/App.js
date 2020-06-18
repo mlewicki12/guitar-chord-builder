@@ -1,6 +1,6 @@
 
 import React from 'react';
-import ChordConfig from './Config.js'
+import ChordSelector from './Components/ChordSelector.js';
 
 import './App.css';
 
@@ -14,7 +14,7 @@ class App extends React.Component {
     render() {
         return (
             <div className="App main">
-                <ChordConfig maxStrings={12}/>
+                <ChordSelector maxStrings={12}/>
             </div>
         );
     }

@@ -1,10 +1,7 @@
 
-import React from 'react';
+import Variables from './Variables.js';
 
-export class ChordFinder {
-    notes = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"];
-    defaultTuning = ["E", "B", "G", "D", "A", "E"];
-
+export default class ChordFinder {
     constructor(stringNotes, chord) {
         this.setInfo(stringNotes, chord);
     }
@@ -98,10 +95,8 @@ export class ChordFinder {
         return scale[4];
     }
 
-    majorSteps = [2, 2, 1, 2, 2, 2, 1];
-    minorSteps = [2, 1, 2, 2, 1, 2, 2];
     buildScale(note, minor) {
-        let steps = minor ? this.minorSteps : this.majorSteps;
+        let steps = minor ? Variables.minorSteps : Variables.majorSteps;
         let ind = this.notes.findIndex(e => e === note.toUpperCase());
         let notes = [this.notes[ind]];
         steps.forEach(step => {
@@ -125,66 +120,3 @@ export class ChordFinder {
         return this.buildChord(note, [1, 3, 5], minor);
     }
 }
-
-export var ChordFinderStatic = new ChordFinder();
-
-class ChordDisplay extends React.Component {
-    render() {
-        let frets = this.props.frets.map(x => x === -1 ? "X" : x)
-        return (
-            <ul className="string-tab">
-                {this.props.strings.map((val, index) => <li key={val}>{val}|--{frets[index]}{frets[index] > 9 ? "-" : "--"}---</li>)}
-            </ul>
-        )
-    }
-}
-
-export class ChordBuilder extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.finder = new ChordFinder(props.strings, props.chord);
-        let chords = [];
-        let chordsTemp = this.finder.buildChords([], this.props.range);
-
-        let stack = [chordsTemp];
-        while(stack.length > 0) {
-            let top = stack.pop();
-            if(top.slice(1).find(val => Array.isArray(val))) {
-                stack.push(top.slice(1));
-            }
-
-            if(isNaN(top[0])) {
-                stack.push(top[0]);
-            } else {
-                chords.push(top);
-            }
-        }
-
-        this.state = {chords: chords, page: 0}
-
-    }
-
-    render() {
-        let maxPage = Math.floor(this.state.chords.length / this.props.size);
-        return (
-            <React.Fragment>
-                <div className="flex-row">
-                    {this.state.chords.slice(
-                        this.state.page * this.props.size,
-                        (this.state.page + 1) * this.props.size
-                    ).map(val => <ChordDisplay key={val} strings={this.props.strings} frets={val} />)}
-                </div>
-                <div className="flex-row">
-                    <button onClick={() => this.setState({page: 0})} disabled={this.state.page === 0}>First</button>
-                    <button onClick={() => this.setState({page: Math.max(this.state.page - 1, 0)})} disabled={this.state.page === 0}>Previous</button>
-                    <button onClick={() => this.setState({page: Math.min(this.state.page + 1, maxPage)})} disabled={this.state.page === maxPage}>Next</button>
-                    <button onClick={() => this.setState({page: maxPage})} disabled={this.state.page === maxPage}>Last</button>
-                </div>
-                <p>Page {this.state.page + 1} of {Math.floor(this.state.chords.length / this.props.size) + 1}</p>
-            </React.Fragment>
-        );
-    }
-}
-
-export default ChordBuilder;
