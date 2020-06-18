@@ -20,7 +20,7 @@ export default class ChordFinder {
         range = range || 12;
         let ret = [];
         for(var i = 0; i < range; ++i) {
-            ret.push({note: this.notes[ind % this.notes.length], fret: i});
+            ret.push({note: Variables.notes[ind % Variables.notes.length], fret: i});
             ind += 1;
         }
 
@@ -63,7 +63,7 @@ export default class ChordFinder {
             let chordF = chord.map(x => x.fret);
             if((Math.abs(this.getRange(chordF.filter(x => x !== 0))) < range) && // within fingering range ( ͡° ͜ʖ ͡°)
                (this.findAll(chord.map(x => x.note), this.chord))             && // can find all notes within chord
-               (chordF.find(x => x !== -1) !== undefined))                                     // not made up only of mutes
+               (chordF.find(x => x !== -1) !== undefined))                       // not made up only of mutes
                 return chordF;
             else return undefined;
         }
@@ -73,21 +73,21 @@ export default class ChordFinder {
     }
 
     find(note) {
-        return this.notes.findIndex(e => e === note.toUpperCase());
+        return Variables.notes.findIndex(e => e === note.toUpperCase());
     }
 
     flat(note) {
         let ind = this.find(note);
-        ind = (ind - 1) === -1 ? this.notes.length - 1 : (ind - 1);
+        ind = (ind - 1) === -1 ? Variables.notes.length - 1 : (ind - 1);
 
-        return this.notes[ind];
+        return Variables.notes[ind];
     }
 
     sharp(note) {
         let ind = this.find(note);
-        ind = (ind + 1) % this.notes.length;
+        ind = (ind + 1) % Variables.notes.length;
 
-        return this.notes[ind];
+        return Variables.notes[ind];
     }
 
     getPerfectFourth(note) {
@@ -97,11 +97,11 @@ export default class ChordFinder {
 
     buildScale(note, minor) {
         let steps = minor ? Variables.minorSteps : Variables.majorSteps;
-        let ind = this.notes.findIndex(e => e === note.toUpperCase());
-        let notes = [this.notes[ind]];
+        let ind = Variables.notes.findIndex(e => e === note.toUpperCase());
+        let notes = [Variables.notes[ind]];
         steps.forEach(step => {
-            ind = (ind + step) % this.notes.length;
-            notes.push(this.notes[ind]);
+            ind = (ind + step) % Variables.notes.length;
+            notes.push(Variables.notes[ind]);
         });
 
         return notes;

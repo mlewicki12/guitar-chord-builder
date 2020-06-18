@@ -13,6 +13,7 @@ export default class ChordBuilder extends BaseComponent {
         let chords = [];
         let chordsTemp = this.finder.buildChords([], this.props.range);
 
+        debugger;
         let stack = [chordsTemp];
         while(stack.length > 0) {
             let top = stack.pop();
