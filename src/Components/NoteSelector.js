@@ -51,8 +51,8 @@ export default class NoteSelector extends BaseComponent {
                     ))}
                 </div>
                 <div>
-                    <button onClick={() => this.removeString()} disabled={this.state.notes.length === 1}>-</button> 
-                    <button onClick={() => this.addString()} disabled={this.state.notes.length >= this.props.maxStrings}>+</button> 
+                    <button onClick={() => this.addString()} disabled={this.state.notes.length >= this.props.maxStrings}>Add a {this.props.text || "string"}</button> 
+                    <button onClick={() => this.removeString()} disabled={this.state.notes.length === 1}>Remove a {this.props.text || "string"}</button> 
                 </div>
             </React.Fragment>
         );

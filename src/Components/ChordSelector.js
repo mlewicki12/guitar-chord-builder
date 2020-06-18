@@ -24,6 +24,8 @@ export default class ChordSelector extends BaseComponent {
     }
 
     render() {
+        let buildChord = (chordNote, chordIsMinor) => {return this.ChordFinder.buildChord(chordNote, [1, 3, 5], chordIsMinor);}
+
         return (
             <React.Fragment>
                 {this.state.displayMode === "input" &&
@@ -39,15 +41,17 @@ export default class ChordSelector extends BaseComponent {
                                 <option value="chord">Chord Mode</option>
                                 <option value="note">Note Mode</option>
                             </select>
-                            {this.state.chordMode === "note"              ?
-                                <NoteSelector notes={this.state.chord} onChange={(state) => this.update({chord: state.notes})}/>  :
+                            {this.state.chordMode === "note" ?
+                                <NoteSelector notes={this.state.chord} key={this.state.chord} text={"note"} onChange={(state) => this.update({chord: state.notes})}/>  :
                                 <div>
-                                    <select id="chord-note-selector" defaultValue={this.state.chordNote} onChange={(event) => this.update({chordNote: event.target.value})}>
+                                    <select id="chord-note-selector" defaultValue={this.state.chordNote}
+                                            onChange={(event) => this.update({chordNote: event.target.value, chord: buildChord(event.target.value, this.state.chordIsMinor)})}>
                                         {Variables.notes.map(note => 
                                             <option value={note}>{note}</option>
                                         )}
                                     </select>
-                                    <select id="chord-mode-selector" defaultValue={this.state.chordIsMinor} onChange={(event) => this.update({chordIsMinor: (event.target.value === "minor")})}>
+                                    <select id="chord-mode-selector" defaultValue={this.state.chordIsMinor} 
+                                            onChange={(event) => this.update({chordIsMinor: event.target.value, chord: buildChord(this.state.chordNote, event.target.value)})}>
                                         <option value="major">Major</option>
                                         <option value="minor">Minor</option>
                                     </select>
@@ -59,9 +63,7 @@ export default class ChordSelector extends BaseComponent {
                     </div>
                 }
                 {this.state.displayMode === "chords" &&
-                    (this.state.chordMode ==="note" ?
-                        <ChordBuilder strings={this.state.strings} chord={this.state.chord} range={5} size={20} /> :
-                        <ChordBuilder strings={this.state.strings} chord={this.ChordFinder.buildChord(this.state.chordNote, [1, 3, 5], this.state.chordIsMinor)} range={5} size={20} />)
+                    <ChordBuilder strings={this.state.strings} chord={this.state.chord} range={5} size={20} />
                 }
             </React.Fragment>
         )       
