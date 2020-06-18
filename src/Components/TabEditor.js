@@ -2,6 +2,20 @@
 import React from 'react';
 import BaseComponent from './BaseComponent.js';
 
+let Keybinds = {
+    Actions: [
+        {keys: ["ArrowUp", "W"], func: (editor) => editor.changePosition([-1, 0])},
+        {keys: ["ArrowDown", "S"], func: (editor) => editor.changePosition([1, 0])},
+        {keys: ["ArrowLeft", "A"], func: (editor) => editor.changePosition([0, -1])},
+        {keys: ["ArrowRight", "D"], func: (editor) => editor.changePosition([0, 1])},
+
+        {keys: ["Backspace", "Delete"], func: (editor) => editor.delete()},
+        {keys: [" "], func: (editor) => editor.advance()},
+    ],
+
+    AllowedChars: "1234567890xhp/\\^b"
+};
+
 function fillTab(length, map) {
     let ret = "";
     let symbols = map.map(val => val.symbol);   
@@ -10,7 +24,6 @@ function fillTab(length, map) {
 
     for(var i = 0; i < length; ++i) {
         if(i === indices[position]) {
-            debugger;
             ret += symbols[position];
             while(indices[position] === i) {
                 position += 1;
@@ -41,8 +54,6 @@ function mapEntrySort(f, o) {
 }
 
 export default class TabEditor extends BaseComponent {
-    allowedChars = "1234567890xhp/\\^b";
-    
     blinkerFunction() {
         let stringMap = this.state.map[this.state.position[0]];
         if(stringMap.find(val => val.symbol === this.state.cursor)) {
@@ -61,17 +72,12 @@ export default class TabEditor extends BaseComponent {
     }
 
     tabControls(event) {
-        if(event.key === "ArrowUp") {
-            this.changePosition([-1, 0]);
-        } else if(event.key === "ArrowDown") {
-            this.changePosition([1, 0]);
-        } else if(event.key === "ArrowRight") {
-            this.changePosition([0, 1]);
-        } else if(event.key === "ArrowLeft" || event.key === "Space") {
-            this.changePosition([0, -1]);
-        } else if(event.key === "Backspace" || event.key === "Delete") {
-            this.delete();
-        } else if(this.allowedChars.includes(event.key)) {
+        let action = Keybinds.Actions.find(val => val.keys.includes(event.key));
+        if(action) {
+            action.func(this);
+        }
+
+        if(Keybinds.AllowedChars.includes(event.key)) {
             this.insert(event.key);
         }
     }
@@ -103,10 +109,47 @@ export default class TabEditor extends BaseComponent {
         let position = this.state.position;
         let mod = (map) => {
             map[position[0]] = map[position[0]].filter(val => val.position !== position[1]);
+            map[position[0]].forEach(val => {
+                if(val.symbol === "|") return
+                if(val.position < position[1]) return
+
+                val.position -= 1;
+            })
             return map;
         }
 
         this.changeMap(mod, [0, -1]);
+    }
+
+    advance() {
+        let position = this.state.position;
+        let mod = (map) => {
+            let max = -1;
+            map[position[0]].forEach(val => {
+                if(val.symbol === "|") return
+                if(val.position < position[1]) return
+
+                val.position += 1;
+                if(val.position > max) {
+                    max = val.position;
+                }
+            });
+
+            if(max > this.state.length) {
+                this.update({
+                    length: max
+                });
+            } else if(max === this.state.length) {
+                this.update({
+                    length: max + 1
+                });
+            }
+
+            return map;
+        }
+
+
+        this.changeMap(mod, [0, 0]);
     }
 
     constructor(props) {
