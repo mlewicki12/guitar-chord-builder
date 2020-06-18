@@ -2,7 +2,7 @@
 import React from 'react';
 import BaseComponent from '../BaseComponent.js';
 
-export default class TabView extends BaseComponent {
+export default class NavView extends BaseComponent {
     constructor(props) {
         super(props);
 

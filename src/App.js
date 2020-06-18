@@ -1,7 +1,7 @@
 
 import React from 'react';
 import ChordSelector from './Components/ChordSelector.js';
-import TabView from './Components/Navigation/TabView.js';
+import NavView from './Components/Navigation/NavView.js';
 import TabEditor from './Components/TabEditor.js';
 
 import './App.css';
@@ -29,7 +29,7 @@ class App extends React.Component {
     render() {
         return (
             <div className="App main">
-                <TabView tabs={tabs} />
+                <NavView tabs={tabs} />
             </div>
         );
     }
