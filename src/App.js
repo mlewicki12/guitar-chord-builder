@@ -4,7 +4,7 @@ import ChordSelector from './Components/ChordSelector.js';
 import NavView from './Components/Navigation/NavView.js';
 import TabEditor from './Components/TabEditor.js';
 
-import './App.css';
+import './Style/App.css';
 
 let tabs = [
     {

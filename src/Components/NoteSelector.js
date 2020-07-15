@@ -2,6 +2,7 @@
 import React from 'react';
 import BaseComponent from './BaseComponent.js';
 import Variables from '../Variables.js';
+import ChordFinder from '../ChordFinder.js';
 
 export default class NoteSelector extends BaseComponent {
     constructor(props) {
@@ -18,12 +19,12 @@ export default class NoteSelector extends BaseComponent {
         if(len < 6) {
             note = Variables.defaultTuning[len];
         } else {
-            note = Variables.getPerfectFourth(this.state.notes[len-1]);
+            let chord = new ChordFinder();
+            note = chord.getPerfectFourth(this.state.notes[len-1]);
         }
 
 
         let newNotes = this.state.notes.concat([note]);
-        debugger;
         this.update({notes: newNotes});
     }
 
