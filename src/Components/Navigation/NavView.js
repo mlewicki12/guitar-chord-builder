@@ -13,14 +13,16 @@ export default class NavView extends BaseComponent {
 
     render() {
         return (
-            <div class="display">
-                <div class="flex-row">
+            <React.Fragment>
+                <div class="tab nav flex-column">
                     {this.props.tabs.map(tab => 
                         <button onClick={() => this.update({activeTab: tab})} disabled={tab.id === this.state.activeTab.id}>{tab.name}</button>
                     )}
                 </div>
-                {this.state.activeTab.component}
-            </div>
+                <div class="tab">
+                    {this.state.activeTab.component}
+                </div>
+            </React.Fragment>
         )
     }
 }

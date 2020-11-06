@@ -13,7 +13,7 @@ let Keybinds = {
         {keys: [" "], func: (editor) => editor.advance()},
     ],
 
-    AllowedChars: "1234567890xhp/\\^b"
+    AllowedChars: "1234567890xhps/\\^b"
 };
 
 function fillTab(length, map) {
@@ -89,15 +89,17 @@ export default class TabEditor extends BaseComponent {
             map: func(map)
         });
 
-        this.changePosition(offset || [0, 1]);
+        this.changePosition(offset);
     }
 
     insert(val) {
-        let position = this.state.position;
+        let string = this.state.position[0];
+        let column = this.state.position[1];
+
         let mod = (map) => {
-            map[position[0]] = map[position[0]].filter(val => val.position !== position[1]);
-            map[position[0]].push({position: position[1], symbol: val});
-            map[position[0]].sort(mapEntrySort);
+            map[string] = map[string].filter(val => val.position !== column);
+            map[string].push({position: column, symbol: val});
+            map[string].sort(mapEntrySort);
 
             return map;
         }
@@ -106,15 +108,27 @@ export default class TabEditor extends BaseComponent {
     }
 
     delete() {
-        let position = this.state.position;
+        let string = this.state.position[0];
+        let column = this.state.position[1];
+
         let mod = (map) => {
-            map[position[0]] = map[position[0]].filter(val => val.position !== position[1]);
-            map[position[0]].forEach(val => {
+            map[string] = map[string].filter(val => val.position !== column);
+            map[string].forEach(val => {
                 if(val.symbol === "|") return
-                if(val.position < position[1]) return
+                if(val.position < column) return
 
                 val.position -= 1;
-            })
+            });
+
+            let newLength = this.state.length - 1;
+            if(newLength < this.state.default_length) {
+                newLength = this.state.default_length;
+            }
+
+            this.update({
+                length: newLength
+            });
+
             return map;
         }
 
@@ -122,12 +136,14 @@ export default class TabEditor extends BaseComponent {
     }
 
     advance() {
-        let position = this.state.position;
+        let string = this.state.position[0];
+        let column = this.state.position[1];
+
         let mod = (map) => {
             let max = -1;
-            map[position[0]].forEach(val => {
+            map[string].forEach(val => {
                 if(val.symbol === "|") return
-                if(val.position < position[1]) return
+                if(val.position < column) return
 
                 val.position += 1;
                 if(val.position > max) {
@@ -162,9 +178,11 @@ export default class TabEditor extends BaseComponent {
             map.push([]);
         }
 
+        let default_length = 10;
         return {
             position: [0, 0],
-            length: props.length || 10,
+            default_length: props.default_length || default_length,
+            length: props.length || props.default_length || default_length,
             cursor: props.cursor || '|',
             interval: props.interval || 400,
             map: map
@@ -198,13 +216,15 @@ export default class TabEditor extends BaseComponent {
         let length = this.state.length;
 
         if(position[0] < 0) position[0] = 0;
-        if(position[1] < 0) position[1] = 0;
         if(position[0] > this.props.strings.length) position[0] = this.props.strings.length;
+
+        if(position[1] < 0) position[1] = 0;
         if(position[1] >= this.state.length) length += 1;
 
         clearInterval(this.state.blinker);
         let map = this.state.map;
         map = map.map(val => clearTabBlinker(val, this.state.cursor));
+        debugger;
 
         this.update({
             position: position,

@@ -26,34 +26,43 @@ button:hover, button:disabled {
   background-color: #273c75;
   min-height: 100vh;
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-direction: row;
+  align-items: flex-start;
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
 
-.display {
+.tab {
   background-color: #dcdde1;
   color: black;
-  margin: 2.5rem;
-  padding: 2.5rem;
+  margin: 1.5rem;
+  padding: 1rem;
   border-radius: 1rem;
+}
+
+.nav {
+  max-width: 8vw;
+  min-width: 8vw;
+  height: 90vh;
 }
 
 .string-tab {
   list-style-type: none;
   flex-basis: 15%;
+  padding: 0;
 }
 
 .flex-row {
   display: flex;
   flex-flow: row wrap;
-  align-items: center;
-  justify-content: center;
 }
 
 .flex-column {
   display: flex;
   flex-flow: column wrap;
+}
+
+.center {
+  justify-content: center;
   align-items: center;
 }
