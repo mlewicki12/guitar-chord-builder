@@ -55,6 +55,10 @@ function mapEntrySort(f, o) {
 
 export default class TabEditor extends BaseComponent {
     blinkerFunction() {
+        if(this.state.focus === false) {
+            return;
+        }
+
         let stringMap = this.state.map[this.state.position[0]];
         if(stringMap.find(val => val.symbol === this.state.cursor)) {
             stringMap = clearTabBlinker(stringMap, this.state.cursor);
@@ -105,6 +109,9 @@ export default class TabEditor extends BaseComponent {
         }
 
         this.changeMap(mod, [0, 1]);
+        this.setState({
+            length: this.state.length + 1
+        });
     }
 
     delete() {
@@ -178,13 +185,14 @@ export default class TabEditor extends BaseComponent {
             map.push([]);
         }
 
-        let default_length = 10;
+        let default_length = 25;
         return {
             position: [0, 0],
             default_length: props.default_length || default_length,
             length: props.length || props.default_length || default_length,
             cursor: props.cursor || '|',
             interval: props.interval || 400,
+            focus: false,
             map: map
         };
     }
@@ -195,6 +203,7 @@ export default class TabEditor extends BaseComponent {
         this.blinkerFunction = this.blinkerFunction.bind(this);
         this.tabControls = this.tabControls.bind(this);
         this.reset = this.reset.bind(this);
+        this.focus = this.focus.bind(this);
 
         this.state = this.initialState(props);
     }
@@ -224,7 +233,6 @@ export default class TabEditor extends BaseComponent {
         clearInterval(this.state.blinker);
         let map = this.state.map;
         map = map.map(val => clearTabBlinker(val, this.state.cursor));
-        debugger;
 
         this.update({
             position: position,
@@ -234,14 +242,20 @@ export default class TabEditor extends BaseComponent {
         });
     }
 
+    focus(isFocus) {
+        this.setState({
+            focus: isFocus
+        });
+    }
+
     render() {
         return (
-            <React.Fragment>
+            <div onClick={() => this.focus(!this.state.focus)}>
                 <ul className="string-tab">
                     {this.props.strings.map((val, index) => <li key={val}>{val} |{fillTab(this.state.length, this.state.map[index])}</li>)}
                 </ul>
                 <button onClick={this.reset}>Reset</button>
-            </React.Fragment>
+            </div>
         )
     }
 }

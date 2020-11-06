@@ -38,7 +38,7 @@ export default class NoteSelector extends BaseComponent {
     render() {
         return (
             <React.Fragment>
-                <div className="flex-row">
+                <div className="center flex-row">
                     {this.state.notes.map((string, ind) => (
                         <select id={"string-" + ind} key={"string-" + ind} defaultValue={string} onChange={(event) => {
                                 let notes = this.state.notes;
@@ -51,7 +51,7 @@ export default class NoteSelector extends BaseComponent {
                         </select>
                     ))}
                 </div>
-                <div>
+                <div className="start flex-row">
                     <button onClick={() => this.addString()} disabled={this.state.notes.length >= this.props.maxStrings}>Add a {this.props.text || "string"}</button> 
                     <button onClick={() => this.removeString()} disabled={this.state.notes.length === 1}>Remove a {this.props.text || "string"}</button> 
                 </div>

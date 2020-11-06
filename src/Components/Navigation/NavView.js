@@ -19,7 +19,7 @@ export default class NavView extends BaseComponent {
                         <button onClick={() => this.update({activeTab: tab})} disabled={tab.id === this.state.activeTab.id}>{tab.name}</button>
                     )}
                 </div>
-                <div class="tab">
+                <div class={"tab " + this.state.activeTab.class}>
                     {this.state.activeTab.component}
                 </div>
             </React.Fragment>
