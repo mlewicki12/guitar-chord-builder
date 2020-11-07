@@ -29,7 +29,7 @@ button:hover, button:disabled {
 
 .chord-selector {
   width: 80vw;
-  height: 80vh;
+  height: 90vh;
 
   display: flex;
   flex-flow: column nowrap;

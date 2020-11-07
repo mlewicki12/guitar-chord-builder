@@ -34,7 +34,7 @@ export default class ChordSelector extends BaseComponent {
                     <Menu config={this.menuConfig} onChange={(state) => this.update(state)} />
                 }
                 {this.state.displayMode === "chords" &&
-                    <ChordBuilder strings={this.state.strings} chord={this.state.chord} range={5} size={20} />
+                    <ChordBuilder strings={this.state.strings} chord={this.state.chord} range={5} size={30} />
                 }
             </React.Fragment>
         )       
@@ -51,7 +51,7 @@ export default class ChordSelector extends BaseComponent {
                     type: "NoteSelector",
                     notes: ['e', 'B', 'G', 'D', 'A', 'E'],
                     maxStrings: 12,
-                    key: "notes"
+                    key: "strings"
                 }
             ]
         },
