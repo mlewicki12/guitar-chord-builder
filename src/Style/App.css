@@ -84,3 +84,7 @@ button:hover, button:disabled {
 .start {
   justify-content: flex-start;
 }
+
+.padding-child div {
+  padding: 0.5rem;
+}
