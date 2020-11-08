@@ -87,14 +87,14 @@ export default class Menu extends BaseComponent {
 
     defineRadioComponent(details) {
         return (
-            <div className="center flex-row">
+            <div className={details.class}>
               {details.options.map(option => 
-                  <React.Fragment>
+                  <div class={option.class}>
                       <input type="radio" id={option.value || option.name.toLowerCase()} value={option.value || option.name.toLowerCase()} name={details.name} onClick={() => {
                           this.update(this.fillKey(details.key, option.value || option.name.toLowerCase()));
                       }} />
                       <label for={option.value || option.name.toLowerCase()}>{option.name}</label>
-                  </React.Fragment>
+                  </div>
               )}
             </div>
         );
@@ -110,6 +110,10 @@ export default class Menu extends BaseComponent {
     }
 
     render() {
-        return this.props.config.map(section => this.defineMenuSection(section));
+        return (
+            <div className="menu">
+                {this.props.config.map(section => this.defineMenuSection(section))}
+            </div>
+        );
     }
 }

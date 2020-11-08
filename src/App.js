@@ -16,7 +16,6 @@ let tabs = [
         name:       "Tab Editor",
         id:         "tabs",
         component:  React.createElement(TabEditor, {strings: ["e", "B", "G", "D", "A", "E"]}),
-        class:      "display"
     }
 ]
 

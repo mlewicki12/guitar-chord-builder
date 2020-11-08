@@ -50,6 +50,7 @@ export default class ChordBuilder extends BaseComponent {
                     </div>
                     <p>Page {this.state.page + 1} of {Math.floor(this.state.chords.length / this.props.size) + 1}</p>
                 </div>
+                <button onClick={() => this.props.reset()}>Reset</button>
             </div>
         );
     }

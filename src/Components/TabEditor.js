@@ -1,6 +1,7 @@
 
 import React from 'react';
-import BaseComponent from './BaseComponent.js';
+import BaseComponent from './BaseComponent';
+import Menu from './Navigation/Menu';
 
 let Keybinds = {
     Actions: [
@@ -76,6 +77,11 @@ export default class TabEditor extends BaseComponent {
     }
 
     tabControls(event) {
+        // kill the function if we're not in focus
+        if(this.state.focus === false) {
+            return;
+        }
+
         let action = Keybinds.Actions.find(val => val.keys.includes(event.key));
         if(action) {
             action.func(this);
@@ -193,7 +199,9 @@ export default class TabEditor extends BaseComponent {
             cursor: props.cursor || '|',
             interval: props.interval || 400,
             focus: false,
-            map: map
+            map: map,
+            displayMode: 'input',
+            strings: props.strings
         };
     }
 
@@ -210,10 +218,6 @@ export default class TabEditor extends BaseComponent {
 
     componentDidMount() {
         document.addEventListener("keydown", this.tabControls, false);
-
-        this.update({
-            blinker: setInterval(this.blinkerFunction, this.state.interval)
-        })
     }
 
     componentWillUnmount() {
@@ -249,13 +253,44 @@ export default class TabEditor extends BaseComponent {
     }
 
     render() {
+        console.log(this.state.strings);
         return (
-            <div onClick={() => this.focus(!this.state.focus)}>
-                <ul className="string-tab">
-                    {this.props.strings.map((val, index) => <li key={val}>{val} |{fillTab(this.state.length, this.state.map[index])}</li>)}
-                </ul>
-                <button onClick={this.reset}>Reset</button>
-            </div>
+            <React.Fragment>
+                {this.state.displayMode === "input" ?
+                    <Menu config={this.menuConfig} onChange={(state) => this.update(state)} /> :
+                    <div class="tab-builder" onClick={() => this.focus(!this.state.focus)}>
+                        <ul className="string-tab">
+                            {this.state.strings.map((val, index) => <li key={val}>{val} |{fillTab(this.state.length, this.state.map[index])}</li>)}
+                        </ul>
+                        <button onClick={this.reset}>Reset</button>
+                    </div>}
+            </React.Fragment>
         )
     }
+
+    menuConfig = 
+    [
+        {
+            id: "tuning-selector",
+            title: "Tuning",
+            components: [
+                {
+                    type: "NoteSelector",
+                    notes: ['E', 'B', 'G', 'D', 'A', 'E'],
+                    maxStrings: 12,
+                    key: "strings"
+                }
+            ]
+        },
+        {
+            id: "submit-button",
+            components: [
+                {
+                    type: "Button",
+                    text: "Submit",
+                    onClick: () => this.update({displayMode: "tabs"})
+                } 
+            ]
+        }
+    ]
 }

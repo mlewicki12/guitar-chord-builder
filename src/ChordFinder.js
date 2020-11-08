@@ -91,12 +91,17 @@ export default class ChordFinder {
     }
 
     getPerfectFourth(note) {
-        let scale = this.buildScale(note);
+        let scale = this.buildScale(note, false);
         return scale[4];
     }
 
-    buildScale(note, minor) {
-        let steps = minor ? Variables.minorSteps : Variables.majorSteps;
+    buildScale(note, steps) {
+        // if it's a boolean, that means the caller wants a major/minor scale
+        if(typeof steps === "boolean") {
+            steps = steps ? Variables.minorSteps : Variables.majorSteps;
+        }
+
+        // otherwise we trust the steps they provided us
         let ind = Variables.notes.findIndex(e => e === note.toUpperCase());
         let notes = [Variables.notes[ind]];
         steps.forEach(step => {

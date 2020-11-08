@@ -9,13 +9,10 @@ import Variables from '../Variables';
 
 export default class ChordSelector extends BaseComponent {
     ChordFinder = new ChordFinder();
-    
     buildChord = (chordNote, chordIsMinor) => {return this.ChordFinder.buildChord(chordNote, [1, 3, 5], chordIsMinor);}
 
-    constructor(props) {
-        super(props);
-
-        this.state = {
+    initialState() {
+        return {
             strings: Variables.defaultTuning,
             chord: Variables.defaultChord,
             chordMode: undefined,
@@ -23,8 +20,19 @@ export default class ChordSelector extends BaseComponent {
             chordNote: "G",
             chordTonality: "major"
         };
+    }
+
+    constructor(props) {
+        super(props);
+        this.state = this.initialState()
+
+        this.reset = this.reset.bind(this);
 
         this.addHook(["chordNote", "chordTonality"], (state) => this.update({chord: this.buildChord(state.chordNote, state.chordTonality === "minor")}));
+    }
+
+    reset() {
+        this.setState(this.initialState());
     }
 
     render() {
@@ -34,7 +42,7 @@ export default class ChordSelector extends BaseComponent {
                     <Menu config={this.menuConfig} onChange={(state) => this.update(state)} />
                 }
                 {this.state.displayMode === "chords" &&
-                    <ChordBuilder strings={this.state.strings} chord={this.state.chord} range={5} size={30} />
+                    <ChordBuilder strings={this.state.strings} chord={this.state.chord} range={5} size={30} reset={this.reset}/>
                 }
             </React.Fragment>
         )       
@@ -49,7 +57,7 @@ export default class ChordSelector extends BaseComponent {
             components: [
                 {
                     type: "NoteSelector",
-                    notes: ['e', 'B', 'G', 'D', 'A', 'E'],
+                    notes: ['E', 'B', 'G', 'D', 'A', 'E'],
                     maxStrings: 12,
                     key: "strings"
                 }
@@ -64,14 +72,17 @@ export default class ChordSelector extends BaseComponent {
                     key: "chordMode",
                     default: "chord",
                     name: "mode",
+                    class: "padding-child flex-row",
                     options: [
                         {
                             value: "chord",
-                            name: "Chord"
+                            name: "Chord",
+                            class: "center flex-row"
                         },
                         {
                             value: "note",
-                            name: "Note"
+                            name: "Note",
+                            class: "center flex-row"
                         }
                     ]
                 }
